@@ -1,58 +1,69 @@
-# Fare-Tracking Strategy: How to Monitor Prices Without Triggering Increases
+# Google Flights Fare Tracker
 
-This document outlines a strategy for tracking airfare, hotel, and other travel-related prices to find the best deals without inadvertently causing prices to rise due to your search activity.
+This repository contains a Python script for tracking flight fares from Google Flights using the HasData API. It is a command-line tool that allows you to monitor the price of a specific flight and receive alerts when the price drops.
 
-## Core Principle
+## How It Works
 
-The primary goal of this strategy is to **passively monitor prices** while minimizing your digital footprint. Travel booking sites often use tracking cookies, browser history, and other data to gauge demand. Frequent searches for the same route or dates can be interpreted as high interest, leading to price increases. This strategy focuses on "hiding" your intent while still staying informed about price drops.
+The script uses the [HasData Google Flights API](https://hasdata.com/apis/google-flights-api) to fetch real-time flight fare data. The price is then saved to a local CSV file, `price_history.csv`, to keep a record of the price over time. On subsequent runs, the script will compare the current price to the last recorded price and alert the user if the price has dropped.
 
-## Behavioral Rules
+## Setup and Installation
 
-Follow these best practices every time you search for fares to avoid leaving a trail that can be used to increase prices.
+### 1. Install Dependencies
 
-*   **Use Incognito/Private Browsing:** Always start a new incognito or private browsing session for each search. This prevents your search history and cookies from previous sessions from being used to track your activity.
-*   **Clear Cookies Regularly:** If you're not using incognito mode, make sure to clear your browser's cookies and cache before each new search session.
-*   **Use a VPN (Virtual Private Network):** A VPN masks your IP address, making it appear as though you are searching from a different location. This can help you see different prices that may be offered to users in other regions and prevents your real IP address from being tracked.
-*   **Avoid Signing In:** Do not sign in to your airline or travel booking accounts while searching. Your search history can be tied to your account, which can be used to track your interest and adjust prices.
-*   **Use Multiple Search Engines:** Compare prices across different travel search engines (e.g., Google Flights, Skyscanner, Momondo) to get a broader view of the market.
+Before running the script, you need to install the required Python packages. You can do this using `pip`:
 
-## Search Frequency and Timing
+```bash
+pip install -r requirements.txt
+```
 
-How often and when you search can impact the prices you see.
+### 2. Get an API Key
 
-*   **Limit Manual Searches:** Avoid searching for the same fare multiple times a day. The more you search, the more likely you are to be flagged as a "high-interest" buyer. Limit manual checks to once a day at most.
-*   **Search at Off-Peak Times:** While there's no magic time to find the cheapest fares, searching late at night or early in the morning can sometimes yield better results.
-*   **Reset Your Search Timing:** If you suspect your searches are being tracked, take a break for a day or two to let your digital footprint fade.
+This script requires an API key from HasData. You can get a free API key by signing up on the [HasData website](https://hasdata.com/signup).
 
-## Alert Setup
+### 3. Set the Environment Variable
 
-Automated alerts are the most effective way to track prices without actively searching.
+For security reasons, it is recommended to set your API key as an environment variable.
 
-*   **Set Up Price Alerts:** Use travel search engines like Google Flights, Skyscanner, or Kayak to set up price alerts for your desired routes and dates. These services will monitor the fares for you and send you an email or notification when the price changes.
-*   **Use Multiple Alert Services:** Set up alerts on more than one platform to ensure you don't miss a price drop.
-*   **Be Specific with Your Alerts:** If your travel dates are flexible, set up alerts for a range of dates to increase your chances of finding a good deal.
+*   **On macOS and Linux:**
+    ```bash
+    export HASDATA_API_KEY="your_api_key_here"
+    ```
+*   **On Windows:**
+    ```bash
+    set HASDATA_API_KEY="your_api_key_here"
+    ```
+Replace `"your_api_key_here"` with the API key you received from HasData.
 
-## Practical Examples
+## Usage
 
-Here are a few scenarios that illustrate how to apply this strategy.
+You can run the script from the command line. You must provide the origin, destination, start date, and end date as arguments.
 
-**Scenario 1: You have a specific destination and dates in mind.**
+### Arguments
 
-1.  Open a new incognito browser window.
-2.  Connect to a VPN.
-3.  Go to a travel search engine like Google Flights.
-4.  Search for your desired route and dates.
-5.  Instead of booking, set up a price alert for that specific trip.
-6.  Close the incognito window.
-7.  Repeat the process on one or two other travel search engines to set up multiple alerts.
-8.  Wait for the price drop notifications to come to you.
+*   `origin`: The origin airport code (e.g., `SFO`).
+*   `destination`: The destination airport code (e.g., `LAX`).
+*   `start_date`: The departure date in `YYYY-MM-DD` format.
+*   `end_date`: The return date in `YYYY-MM-DD` format.
 
-**Scenario 2: You have a destination in mind but are flexible with the dates.**
+### Example
 
-1.  Follow the same steps as in Scenario 1 (incognito, VPN).
-2.  On the travel search engine, use the "flexible dates" or "price graph" feature to see a range of prices over a month or a season.
-3.  Set up multiple alerts for different date ranges that work for you.
-4.  Close the incognito window.
-5.  Let the alerts do the work and notify you of the best time to book.
+To track the price of a round-trip flight from San Francisco (SFO) to Los Angeles (LAX) from December 25, 2024, to January 1, 2025, you would run the following command:
 
-By following this strategy, you can stay on top of fare changes and book at the right time without letting travel sites use your own search activity against you.
+```bash
+python fare_tracker.py SFO LAX 2024-12-25 2025-01-01
+```
+
+### Output
+
+The script will print the current price of the flight and, if it has been run before, will alert you if the price has dropped.
+
+```
+Starting the fare tracker...
+The current price for a flight from SFO to LAX is $128.
+
+==============================
+  PRICE DROP ALERT!
+  The price for a flight from SFO to LAX
+  has dropped from $150 to $128.
+==============================
+```
